@@ -50,4 +50,13 @@ class AuthController extends Controller
             'data' => $responseData,
         ]);
     }
+
+    public function getUser(Request $request)
+    {
+        // Mengembalikan data pengguna yang sedang terotentikasi
+        return response()->json([
+            'success' => true,
+            'data' => $request->user()
+        ], 200);
+    }
 }
