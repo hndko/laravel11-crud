@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
@@ -29,8 +30,7 @@ class AuthController extends Controller
         }
 
         // Buat user baru
-        $user = new User();
-        $user::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password)
@@ -46,8 +46,8 @@ class AuthController extends Controller
         // Kirim response sukses
         return response()->json([
             'success' => true,
+            'message' => 'User successfully registered.',
             'data' => $responseData,
-            'message' => 'User successfully registered.'
         ]);
     }
 }
