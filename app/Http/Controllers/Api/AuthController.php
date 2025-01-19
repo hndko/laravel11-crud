@@ -84,4 +84,43 @@ class AuthController extends Controller
             'message' => 'Successfully logged out.'
         ]);
     }
+
+    public function login(Request $request)
+    {
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation errors occurred.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Verifikasi kredensial
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            $user = Auth::user();
+            $responseData = [
+                'token' => $user->createToken($user->name)->plainTextToken,
+                'name' => $user->name,
+            ];
+
+            // Kirim respons sukses
+            return response()->json([
+                'success' => true,
+                'message' => 'Login successful.',
+                'data' => $responseData,
+            ], 200);
+        }
+
+        // Kredensial salah
+        return response()->json([
+            'success' => false,
+            'message' => 'Invalid credentials.',
+        ], 401);
+    }
 }
