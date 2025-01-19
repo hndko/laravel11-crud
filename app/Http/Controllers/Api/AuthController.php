@@ -59,4 +59,29 @@ class AuthController extends Controller
             'data' => $request->user()
         ], 200);
     }
+
+    public function logout(Request $request)
+    {
+        // Ambil pengguna yang sedang login
+        $user = Auth::user();
+
+        // Periksa apakah pengguna ada dan memiliki token
+        if (!$user || $user->tokens->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No active tokens found for this user.'
+            ], 404);
+        }
+
+        // Hapus semua token yang terkait dengan pengguna
+        $user->tokens->each(function ($token) {
+            $token->delete();
+        });
+
+        // Kirim response sukses
+        return response()->json([
+            'success' => true,
+            'message' => 'Successfully logged out.'
+        ]);
+    }
 }
